@@ -33,6 +33,7 @@ Wallet.prototype.import = function(credentials) {
         this.address = wallet.getAddressString();
         this.privateKey = wallet.getPrivateKeyString();
         this.mnemonic = trimmed;
+        this.imported = true;
 
     }else if(trimmed.match(/(0x)?[\da-fA-F]{64}/)){
 
@@ -43,7 +44,7 @@ Wallet.prototype.import = function(credentials) {
         this.address = wallet.getAddressString();
         this.privateKey = wallet.getPrivateKeyString();
         this.mnemonic = null;
-
+        this.imported = true;
 
     }else{
         throw "Wallet import from "+credentials+" is not possible";
