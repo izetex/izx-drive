@@ -24,7 +24,8 @@
   "license": "MIT",
   "dependencies": {
     "bip39": "^2.4.0",
-    "ethereumjs-wallet": "^0.6.0"
+    "ethereumjs-wallet": "^0.6.0",
+    "buffer": "^5.0.8"
   },
   "devDependencies": {
     "nyc": "^11.3.0",

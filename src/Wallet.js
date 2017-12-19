@@ -1,5 +1,7 @@
 var bip39 = require('bip39');
 var hdkey = require('ethereumjs-wallet/hdkey');
+var eth = require('ethereumjs-wallet');
+var Buffer = require('buffer/').Buffer;
 
 function Wallet(){
 
@@ -33,6 +35,15 @@ Wallet.prototype.import = function(credentials) {
         this.mnemonic = trimmed;
 
     }else if(trimmed.match(/(0x)?[\da-fA-F]{64}/)){
+
+        if(trimmed.indexOf('0x')==0)
+            trimmed = trimmed.slice(2);
+
+        var wallet = eth.fromPrivateKey(Buffer.from(trimmed, "hex"));
+        this.address = wallet.getAddressString();
+        this.privateKey = wallet.getPrivateKeyString();
+        this.mnemonic = null;
+
 
     }else{
         throw "Wallet import from "+credentials+" is not possible";
