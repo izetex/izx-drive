@@ -7,6 +7,9 @@ module.exports = {
        foundation: {
            url: 'http://info.ph3.izx.io:8545', // TODO! change
        }
+   },
+   izx_game: {
+       api: 'https://izx.io/2/'
    }
 
 }
