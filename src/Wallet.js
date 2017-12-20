@@ -3,6 +3,8 @@ var hdkey = require('ethereumjs-wallet/hdkey');
 var eth = require('ethereumjs-wallet');
 var Buffer = require('buffer/').Buffer;
 
+var IzxToken = require('./lib/IzxToken');
+
 function Wallet(){
 
     this.imported = false;
@@ -71,6 +73,32 @@ Wallet.prototype.generate_new = function() {
 
     this.address = wallet.getAddressString();
     this.privateKey = wallet.getPrivateKeyString();
+};
+
+Wallet.prototype.export = function() {
+    if(this.initialized()){
+        var data = { privateKey: this.privateKey };
+        if(this.mnemonic)
+            data.mnemonic = this.mnemonic;
+        return data;
+    }else{
+        return null;
+    }
+};
+
+Wallet.prototype.token_balances = function(){
+
+  if(!this.initialized())
+      return null;
+
+  return [
+          {
+            symbol: IzxToken.symbol,
+            name: IzxToken.name,
+            amount: IzxToken.balanceOf(this.address)
+          }
+      ];
+
 };
 
 module.exports = Wallet;
