@@ -32,6 +32,7 @@
   "devDependencies": {
     "nyc": "^11.3.0",
     "standard": "^10.0.3",
-    "tape": "^4.8.0"
+    "tape": "^4.8.0",
+    "zeppelin-solidity": "^1.4.0"
   }
 }
