@@ -26,7 +26,7 @@
     "bip39": "^2.4.0",
     "ethereumjs-wallet": "^0.6.0",
     "buffer": "^5.0.8",
-    "web3": "^0.14.0"
+    "web3": "^0.14.1"
   },
   "devDependencies": {
     "nyc": "^11.3.0",

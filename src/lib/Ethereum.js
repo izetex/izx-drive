@@ -6,7 +6,11 @@ var foundation = function() {
     return new Web3(new Web3.providers.HttpProvider(config.ethereum.foundation.url));
 };
 
+var ropsten = function() {
+    return new Web3(new Web3.providers.HttpProvider(config.ethereum.ropsten.url));
+};
 
 module.exports = {
-    foundation: foundation
+    foundation: foundation,
+    ropsten: ropsten
 };

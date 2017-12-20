@@ -4,6 +4,7 @@ var eth = require('ethereumjs-wallet');
 var Buffer = require('buffer/').Buffer;
 
 var IzxToken = require('./lib/IzxToken');
+var IzxDriveToken = require('./lib/IzxDriveToken');
 
 function Wallet(){
 
@@ -91,13 +92,21 @@ Wallet.prototype.token_balances = function(){
   if(!this.initialized())
       return null;
 
-  return [
+  var balances = [
           {
             symbol: IzxToken.symbol,
             name: IzxToken.name,
             amount: IzxToken.balanceOf(this.address)
           }
       ];
+
+  balances.push({
+      symbol: IzxDriveToken.symbol,
+      name: IzxDriveToken.name,
+      amount: IzxDriveToken.balanceOf(this.address)
+  });
+
+  return balances;
 
 };
 
