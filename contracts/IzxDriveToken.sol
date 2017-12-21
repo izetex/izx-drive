@@ -11,16 +11,17 @@ contract IzxDriveToken is DetailedERC20, MintableToken, BurnableToken {
         address owner;
         uint256 amount;
         string  brand;
-        uint256 till_time;
+        uint256 expiration;
         bytes   info;
     }
 
 
-    mapping(bytes32 => DroppedToken) public drops;
+    mapping(uint256 => DroppedToken) public drops;
+    mapping(address => uint256) public dropped_amount;
+    mapping(address => uint256[]) public dropped_expiration;
 
     function IzxDriveToken()
         DetailedERC20('IZX Drive Token', 'DRIVE', 18) public {
-
     }
 
     function mint(address _to, uint256 _amount) public returns (bool) {
@@ -31,24 +32,48 @@ contract IzxDriveToken is DetailedERC20, MintableToken, BurnableToken {
 
     }
 
-    function drop(uint256 _amount, string _brand, bytes32 _hash, uint256 _till_time, bytes _info) public {
+    function drop(uint256 _hash, uint256 _amount, string _brand, uint256 _till_time, bytes _info) public {
         drops[_hash] = DroppedToken(msg.sender, _amount, _brand, _till_time, _info);
     }
 
-    function pick(uint256 _key) public {
-
-        bytes32 hash = sha256(_key, address(this));
-        DroppedToken storage drop = drops[hash];
-
-        require(drop.owner!=address(0));
-        require(drop.till_time==0 || drop.till_time>now);
-
-
-
+    function undrop(uint256 _hash) public {
+        DroppedToken drop = drops[_hash];
+        require(drop.owner==msg.sender);
+        dropped_amount[drop.owner] -= drop.amount;
+        delete(drops[_hash]);
     }
 
-    function key_hash(uint256 _key) public view returns(bytes32) {
-        return sha256(_key, address(this));
+    function pick(uint256 _key) public returns (bool){
+
+        uint256 hash = key_hash256(_key);
+        DroppedToken drop = drops[hash];
+
+        require(drop.owner!=address(0));
+
+        if(drop.expiration!=0 && drop.expiration>now){
+            delete(drops[hash]);
+            return false;
+        }else{
+            require(balances[drop.owner]>=drop.amount);
+
+            balances[drop.owner] -= drop.amount;
+            balances[msg.sender] += drop.amount;
+
+            Transfer(drop.owner, msg.sender, drop.amount);
+
+            dropped_amount[drop.owner] -= drop.amount;
+            delete(drops[hash]);
+
+            return true;
+        }
+    }
+
+    function drop_allowance(address _owner) public view returns (uint256){
+        return (balanceOf(_owner) - dropped_amount[_owner]);
+    }
+
+    function key_hash256(uint256 _key) public view returns(uint256) {
+        return uint256(sha256(_key, address(this)));
     }
 
 }

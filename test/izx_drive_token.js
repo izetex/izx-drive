@@ -13,24 +13,22 @@ contract('IzxDriveToken', function(accounts) {
 
     });
 
-
-    it("should compute sha", function (done) {
+    it("should compute sha256", function (done) {
 
         var token,v1;
         IzxDriveToken.deployed().then(function (instance) {
             token = instance;
         }).then( function(){
-            return token.key_hash('0x1');
+            return token.key_hash256('0x1');
         }).then( function(value){
-            v1 = value;
-            return token.key_hash('0x2');
+            v1 = value.toString(16);
+            return token.key_hash256('0x2');
         }).then( function(value){
-            assert.isTrue(v1!=value);
+            var v2 = value.toString(16);
+            assert.isTrue(v1!=v2);
             done();
         });
 
     });
-
-
 
 });
