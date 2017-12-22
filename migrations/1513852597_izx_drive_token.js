@@ -1,4 +1,4 @@
-var IzxDriveToken = artifacts.require("IzxDriveToken");
+var IzxDriveToken = artifacts.require("token/IzxDriveToken");
 
 
 module.exports = function(deployer) {

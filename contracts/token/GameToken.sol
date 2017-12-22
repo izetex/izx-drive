@@ -1,28 +1,23 @@
 pragma solidity ^0.4.18;
 
-import 'zeppelin-solidity/contracts/token/DetailedERC20.sol';
-import 'zeppelin-solidity/contracts/token/BurnableToken.sol';
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
+import 'zeppelin-solidity/contracts/token/BurnableToken.sol';
 
-
-contract IzxDriveToken is DetailedERC20, MintableToken, BurnableToken {
+contract GameToken is MintableToken, BurnableToken {
 
     struct DroppedToken {
         address owner;
+        address application;
         uint256 amount;
         string  brand;
         uint256 expiration;
         bytes   info;
     }
 
-
     mapping(uint256 => DroppedToken) public drops;
     mapping(address => uint256) public dropped_amount;
     mapping(address => uint256[]) public dropped_expiration;
 
-    function IzxDriveToken()
-        DetailedERC20('IZX Drive Token', 'DRIVE', 18) public {
-    }
 
     function mint(address _to, uint256 _amount) public returns (bool) {
         // check that owner has IZX tokens
@@ -32,8 +27,8 @@ contract IzxDriveToken is DetailedERC20, MintableToken, BurnableToken {
 
     }
 
-    function drop(uint256 _hash, uint256 _amount, string _brand, uint256 _till_time, bytes _info) public {
-        drops[_hash] = DroppedToken(msg.sender, _amount, _brand, _till_time, _info);
+    function drop(uint256 _hash, address _application, uint256 _amount, string _brand, uint256 _till_time, bytes _info) public {
+        drops[_hash] = DroppedToken(msg.sender, _application, _amount, _brand, _till_time, _info);
     }
 
     function undrop(uint256 _hash) public {
@@ -69,7 +64,7 @@ contract IzxDriveToken is DetailedERC20, MintableToken, BurnableToken {
     }
 
     function drop_allowance(address _owner) public view returns (uint256){
-        return (balanceOf(_owner) - dropped_amount[_owner]);
+        return balanceOf(_owner) - dropped_amount[_owner];
     }
 
     function key_hash256(uint256 _key) public view returns(uint256) {
