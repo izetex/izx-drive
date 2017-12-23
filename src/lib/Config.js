@@ -2,10 +2,10 @@ module.exports = {
 
    ethereum: {
        ropsten: {
-           url: 'http://node1.ph3.izx.io:8545', // TODO! change
+           url: 'https://izx.io/rposten',
        },
        foundation: {
-           url: 'http://info.ph3.izx.io:8545', // TODO! change
+           url: 'https://izx.io/foundation',
        }
    },
    izx_game: {

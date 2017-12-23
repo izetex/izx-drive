@@ -1,17 +1,45 @@
 pragma solidity ^0.4.18;
 
-import 'zeppelin-solidity/contracts/token/MintableToken.sol';
+import '../game/Game.sol';
+
+import 'zeppelin-solidity/contracts/token/StandardToken.sol';
 import 'zeppelin-solidity/contracts/token/BurnableToken.sol';
 
-contract GameToken is MintableToken, BurnableToken {
+contract GameToken is StandardToken, BurnableToken {
+
+
+    function play(Game game, uint256 _amount, bytes _info, uint256 _expiration, uint256 _hash ) public {
+
+        transfer(game, _amount);
+        game.place( msg.sender, _amount, _info, _expiration, _hash );
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     struct DroppedToken {
-        address owner;
-        address application;
+        Game    game;
+        address issuer;
+        address player;
         uint256 amount;
-        string  brand;
-        uint256 expiration;
         bytes   info;
+        uint256 expiration;
     }
 
     mapping(uint256 => DroppedToken) public drops;
@@ -19,22 +47,15 @@ contract GameToken is MintableToken, BurnableToken {
     mapping(address => uint256[]) public dropped_expiration;
 
 
-    function mint(address _to, uint256 _amount) public returns (bool) {
-        // check that owner has IZX tokens
-    }
-
-    function grant(address _to, uint256 _amount) public onlyOwner {
-
-    }
 
     function drop(uint256 _hash, address _application, uint256 _amount, string _brand, uint256 _till_time, bytes _info) public {
-        drops[_hash] = DroppedToken(msg.sender, _application, _amount, _brand, _till_time, _info);
+  //      drops[_hash] = DroppedToken(msg.sender, _application, _amount, _brand, _till_time, _info);
     }
 
     function undrop(uint256 _hash) public {
         DroppedToken drop = drops[_hash];
-        require(drop.owner==msg.sender);
-        dropped_amount[drop.owner] -= drop.amount;
+        require(drop.issuer==msg.sender);
+        dropped_amount[drop.issuer] -= drop.amount;
         delete(drops[_hash]);
     }
 
@@ -43,20 +64,20 @@ contract GameToken is MintableToken, BurnableToken {
         uint256 hash = key_hash256(_key);
         DroppedToken drop = drops[hash];
 
-        require(drop.owner!=address(0));
+        require(drop.issuer!=address(0));
 
         if(drop.expiration!=0 && drop.expiration>now){
             delete(drops[hash]);
             return false;
         }else{
-            require(balances[drop.owner]>=drop.amount);
+            require(balances[drop.issuer]>=drop.amount);
 
-            balances[drop.owner] -= drop.amount;
+            balances[drop.issuer] -= drop.amount;
             balances[msg.sender] += drop.amount;
 
-            Transfer(drop.owner, msg.sender, drop.amount);
+            Transfer(drop.issuer, msg.sender, drop.amount);
 
-            dropped_amount[drop.owner] -= drop.amount;
+            dropped_amount[drop.issuer] -= drop.amount;
             delete(drops[hash]);
 
             return true;
