@@ -8,7 +8,15 @@ const network = Ethereum.foundation();
 const contract = network.eth.contract(abi).at(address);
 
 function balanceOf(address) {
-    return network.fromWei(contract.balanceOf(address)).toNumber();
+    return new Promise(function(resolve, reject){
+        contract.balanceOf(address, function (err, res) {
+            if(err || !res){
+                reject(err);
+            }else{
+                resolve( network.fromWei(res).toNumber() );
+            }
+        });
+    });
 }
 
 module.exports = {
