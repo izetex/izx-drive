@@ -1,5 +1,5 @@
 var request = require('request');
-var config = require('./Config');
+var config = require('../Config');
 
 var transfer_old_tokens = function(wallet, user, dev) {
     request.post(config.izx_game.api+'transfer_old_tokens', {form: {

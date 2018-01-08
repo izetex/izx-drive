@@ -3,8 +3,8 @@ var hdkey = require('ethereumjs-wallet/hdkey');
 var eth = require('ethereumjs-wallet');
 var Buffer = require('buffer/').Buffer;
 
-var IzxToken = require('./lib/IzxToken');
-var IzxDriveToken = require('./lib/IzxDriveToken');
+var IzxToken = require('./lib/contracts/IzxToken');
+var IzxDriveToken = require('./lib/contracts/IzxDriveToken');
 
 function Wallet(){
 
