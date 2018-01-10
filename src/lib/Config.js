@@ -9,7 +9,7 @@ module.exports = {
        }
    },
    izx_game: {
-       api: 'https://izx.io/2/'
+       api: 'https://izx.io/2/api/'
    }
 
 }
