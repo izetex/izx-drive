@@ -13,6 +13,8 @@ function Wallet(){
     this.mnemonic = null;
     this.privateKey = null;
     this.address = null;
+    this.web3 = null;
+
 }
 
 Wallet.prototype.initialized = function() {
@@ -76,6 +78,10 @@ Wallet.prototype.generate_new = function() {
     this.privateKey = wallet.getPrivateKeyString();
 };
 
+Wallet.prototype.connect = function(web3) {
+
+};
+
 Wallet.prototype.export = function() {
     if(this.initialized()){
         var data = { privateKey: this.privateKey };
@@ -86,6 +92,8 @@ Wallet.prototype.export = function() {
         return null;
     }
 };
+
+
 
 Wallet.prototype.token_balances = function(){
 
