@@ -3,8 +3,8 @@ var hdkey = require('ethereumjs-wallet/hdkey');
 var eth = require('ethereumjs-wallet');
 var Buffer = require('buffer/').Buffer;
 
-var IzxToken = require('./lib/contracts/IzxToken');
-var IzxDriveToken = require('./lib/contracts/IzxDriveToken');
+var Connection = require('./lib/Connection');
+
 
 function Wallet(){
 
@@ -14,11 +14,11 @@ function Wallet(){
     this.privateKey = null;
     this.address = null;
     this.web3 = null;
-
+    this.connection = null;
 }
 
 Wallet.prototype.initialized = function() {
-    return !!this.address;
+    return this.address && this.connection.connected();
 };
 
 Wallet.prototype.import = function(credentials) {
@@ -39,7 +39,7 @@ Wallet.prototype.import = function(credentials) {
         this.privateKey = wallet.getPrivateKeyString();
         this.mnemonic = trimmed;
         this.imported = true;
-
+        this.connection = new Connection(this);
     }else if(trimmed.match(/(0x)?[\da-fA-F]{64}/)){
 
         if(trimmed.indexOf('0x')==0)
@@ -50,7 +50,7 @@ Wallet.prototype.import = function(credentials) {
         this.privateKey = wallet.getPrivateKeyString();
         this.mnemonic = null;
         this.imported = true;
-
+        this.connection = new Connection(this);
     }else{
         throw "Wallet import from "+credentials+" is not possible";
     }
@@ -63,6 +63,7 @@ Wallet.prototype.export = function() {
         var data = { privateKey: this.privateKey };
         if(this.mnemonic)
             data.mnemonic = this.mnemonic;
+        this.exported = true;
         return data;
     }else{
         return null;
@@ -76,10 +77,16 @@ Wallet.prototype.generate_new = function() {
 
     this.address = wallet.getAddressString();
     this.privateKey = wallet.getPrivateKeyString();
+    this.connection = new Connection(this);
 };
 
-Wallet.prototype.connect = function(web3) {
-
+Wallet.prototype.connect_web3 = function(web3) {
+    this.web3  = web3;
+    this.privateKey = this.mnemonic = this.address = null;
+    if(web3){
+        this.address = web3.eth.accounts[0];
+    }
+    this.connection = new Connection(this);
 };
 
 Wallet.prototype.export = function() {
@@ -94,27 +101,18 @@ Wallet.prototype.export = function() {
 };
 
 
-
 Wallet.prototype.token_balances = function(){
 
   if(!this.initialized())
       return null;
-
-  var balances = [
-          {
-            symbol: IzxToken.symbol,
-            name: IzxToken.name,
-            amount: IzxToken.balanceOf(this.address)
-          }
-      ];
-
-  balances.push({
-      symbol: IzxDriveToken.symbol,
-      name: IzxDriveToken.name,
-      amount: IzxDriveToken.balanceOf(this.address)
+  var wallet_address = this.address;
+  return this.connection.tokens.map(function(t){
+      return {
+          symbol: t.symbol,
+          name: t.name,
+          amount: t.balanceOf(wallet_address)
+      };
   });
-
-  return balances;
 
 };
 

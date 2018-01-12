@@ -28,7 +28,8 @@
     "buffer": "^5.0.8",
     "web3": "^0.14.1",
     "request": "^2.34",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "promise": "^8.0.1"
   },
   "devDependencies": {
     "nyc": "^11.3.0",
