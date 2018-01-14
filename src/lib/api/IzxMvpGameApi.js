@@ -3,7 +3,7 @@ var config = require('../Config');
 const Promise = require('promise');
 
 
-var transfer_old_tokens = function(wallet, user, dev) {
+var transfer_old_tokens = function(wallet, hash) {
 
     return new Promise(function(resolve, reject){
 
@@ -12,8 +12,7 @@ var transfer_old_tokens = function(wallet, user, dev) {
             uri: config.izx_game.api+'transfer_old_tokens',
             form: {
                 address: wallet.address,
-                user: user,
-                dev: dev
+                hash: hash
             },
             timeout: config.izx_game.timeout
         }).then(function (body) {

@@ -100,6 +100,10 @@ Wallet.prototype.export = function() {
     }
 };
 
+Wallet.prototype.tokens = function(){
+
+};
+
 
 Wallet.prototype.token_balances = function(){
 
