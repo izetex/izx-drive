@@ -1,6 +1,6 @@
 var request = require('request-promise');
 var config = require('../Config');
-const Promise = require('promise');
+var Promise = require('promise');
 
 
 var transfer_old_tokens = function(wallet, hash) {

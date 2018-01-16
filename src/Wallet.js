@@ -17,10 +17,6 @@ function Wallet(){
     this.connection = null;
 }
 
-Wallet.prototype.initialized = function() {
-    return this.address && this.connection.connected();
-};
-
 Wallet.prototype.import = function(credentials) {
 
     if(typeof(credentials)!='string')
@@ -59,7 +55,7 @@ Wallet.prototype.import = function(credentials) {
 };
 
 Wallet.prototype.export = function() {
-    if(this.initialized()){
+    if(this.connection){
         var data = { privateKey: this.privateKey };
         if(this.mnemonic)
             data.mnemonic = this.mnemonic;
@@ -90,7 +86,7 @@ Wallet.prototype.connect_web3 = function(web3) {
 };
 
 Wallet.prototype.export = function() {
-    if(this.initialized()){
+    if(this.connection){
         var data = { privateKey: this.privateKey };
         if(this.mnemonic)
             data.mnemonic = this.mnemonic;
@@ -101,13 +97,13 @@ Wallet.prototype.export = function() {
 };
 
 Wallet.prototype.tokens = function(){
-
+    if(!this.connection)
+        return null;
+    return this.connection.tokens;
 };
 
-
 Wallet.prototype.token_balances = function(){
-
-  if(!this.initialized())
+  if(!this.connection)
       return null;
   var wallet_address = this.address;
   return this.connection.tokens.map(function(t){
