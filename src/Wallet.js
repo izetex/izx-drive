@@ -8,13 +8,8 @@ var Connection = require('./lib/Connection');
 
 function Wallet(){
 
-    this.imported = false;
-    this.exported = false;
-    this.mnemonic = null;
-    this.privateKey = null;
-    this.address = null;
-    this.web3 = null;
-    this.connection = null;
+    this.imported = this.exported = false;
+    this.mnemonic = this.privateKey = this.address = this.web3 = this.connection = this.wallet = null;
 }
 
 Wallet.prototype.import = function(credentials) {
@@ -29,10 +24,10 @@ Wallet.prototype.import = function(credentials) {
         if(!bip39.validateMnemonic(trimmed))
             throw "Invalid mnemonics";
         var h = hdkey.fromMasterSeed(bip39.mnemonicToSeed(trimmed));
-        var wallet = h.derivePath("m/44'/60'/0'/0/0").getWallet();
+        this.wallet = h.derivePath("m/44'/60'/0'/0/0").getWallet();
 
-        this.address = wallet.getAddressString();
-        this.privateKey = wallet.getPrivateKeyString();
+        this.address = this.wallet.getAddressString();
+        this.privateKey = this.wallet.getPrivateKeyString();
         this.mnemonic = trimmed;
         this.imported = true;
         this.connection = new Connection(this);
@@ -41,60 +36,57 @@ Wallet.prototype.import = function(credentials) {
         if(trimmed.indexOf('0x')==0)
             trimmed = trimmed.slice(2);
 
-        var wallet = eth.fromPrivateKey(Buffer.from(trimmed, "hex"));
-        this.address = wallet.getAddressString();
-        this.privateKey = wallet.getPrivateKeyString();
+        this.wallet = eth.fromPrivateKey(Buffer.from(trimmed, "hex"));
+        this.address = this.wallet.getAddressString();
+        this.privateKey = this.wallet.getPrivateKeyString();
         this.mnemonic = null;
         this.imported = true;
         this.connection = new Connection(this);
     }else{
         throw "Wallet import from "+credentials+" is not possible";
     }
-
-
 };
 
-Wallet.prototype.export = function() {
-    if(this.connection){
-        var data = { privateKey: this.privateKey };
-        if(this.mnemonic)
-            data.mnemonic = this.mnemonic;
-        this.exported = true;
-        return data;
-    }else{
-        return null;
+Wallet.prototype.lock = function() {
+    this.imported = this.exported = false;
+    this.mnemonic = this.privateKey = this.address = this.web3 = this.connection = this.wallet = null;
+};
+
+Wallet.prototype.export = function(password) {
+    if(!this.wallet) {
+        throw "There is nothing to export";
     }
+    var json = this.wallet.toV3(password);
+    this.exported = true;
+    return json;
+};
+
+Wallet.prototype.load = function(input, password) {
+    this.wallet = eth.fromV3(input,password);
+    this.address = this.wallet.getAddressString();
+    this.privateKey = this.wallet.getPrivateKeyString();
+    this.imported = true;
+    this.connection = new Connection(this);
 };
 
 Wallet.prototype.generate_new = function() {
     this.mnemonic = bip39.generateMnemonic();
     var h = hdkey.fromMasterSeed(bip39.mnemonicToSeed(this.mnemonic));
-    var wallet = h.derivePath("m/44'/60'/0'/0/0").getWallet();
-
-    this.address = wallet.getAddressString();
-    this.privateKey = wallet.getPrivateKeyString();
+    this.wallet = h.derivePath("m/44'/60'/0'/0/0").getWallet();
+    this.address = this.wallet.getAddressString();
+    this.privateKey = this.wallet.getPrivateKeyString();
     this.connection = new Connection(this);
 };
 
 Wallet.prototype.connect_web3 = function(web3) {
     this.web3  = web3;
-    this.privateKey = this.mnemonic = this.address = null;
+    this.privateKey = this.mnemonic = this.address = this.wallet = null;
     if(web3){
         this.address = web3.eth.accounts[0];
     }
     this.connection = new Connection(this);
 };
 
-Wallet.prototype.export = function() {
-    if(this.connection){
-        var data = { privateKey: this.privateKey };
-        if(this.mnemonic)
-            data.mnemonic = this.mnemonic;
-        return data;
-    }else{
-        return null;
-    }
-};
 
 Wallet.prototype.tokens = function(){
     if(!this.connection)
