@@ -4,25 +4,45 @@ var abi = [{"constant": true,"inputs": [],"name": "name","outputs": [{"name": ""
 var address = '0xA423267a405dC90C536ec78766d4F36FfDb30fdd';
 
 function IzxDriveToken(web3){
-
     this.name = 'IZX Drive Token';
     this.symbol = 'DRIVE';
     this.contract = web3.eth.contract(abi).at(address);
     this.web3 = web3;
 }
 
-IzxDriveToken.prototype.balanceOf = function(address) {
-    var contract = this.contract;
-    var web3 = this.web3;
-    return new Promise(function(resolve, reject){
-        contract.balanceOf(address, function (err, res) {
-            if(err || !res){
-                reject(err);
-            }else{
-                resolve( web3.fromWei(res).toNumber() );
-            }
+IzxDriveToken.prototype = {
+
+    balanceOf: function(address) {
+        var contract = this.contract;
+        var web3 = this.web3;
+        return new Promise(function(resolve, reject){
+            contract.balanceOf(address, function (err, res) {
+                if(err || !res){
+                    reject(err);
+                }else{
+                    resolve( web3.fromWei(res).toNumber() );
+                }
+            });
         });
-    });
+    },
+
+    approve: function(spender, token_amount){
+        var contract = this.contract;
+        var web3 = this.web3;
+        return new Promise(function(resolve, reject){
+            contract.approve(spender, web3.toWei(token_amount),
+                            {gas: 60000, from: web3.eth.defaultAccount},
+            function (err, res) {
+                if(err || !res){
+                    reject(err);
+                }else{
+                    resolve(res);
+                }
+            });
+        });
+    }
+
 }
+
 
 module.exports = IzxDriveToken;

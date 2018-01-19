@@ -7,10 +7,12 @@ var Connection = require('./lib/Connection');
 
 
 function Wallet(){
-
+    this.approval_callback = null;
     this.imported = this.exported = false;
     this.mnemonic = this.privateKey = this.address = this.web3 = this.connection = this.wallet = null;
 }
+
+
 
 Wallet.prototype.import = function(credentials) {
 
@@ -87,6 +89,16 @@ Wallet.prototype.connect_web3 = function(web3) {
     this.connection = new Connection(this);
 };
 
+/*
+wallet.set_approval_callback( function askApprove(txParams, cb) {
+    console.log("askApprove for: %o ",txParams); // gas from to data
+    cb("Error message", false); // if error OR
+    cb(null, true); // if OK
+});
+*/
+Wallet.prototype.set_approval_callback = function(cb){
+    this.approval_callback = cb;
+}
 
 Wallet.prototype.tokens = function(){
     if(!this.connection)
@@ -107,5 +119,7 @@ Wallet.prototype.token_balances = function(){
   });
 
 };
+
+
 
 module.exports = Wallet;

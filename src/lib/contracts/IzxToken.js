@@ -11,18 +11,38 @@ function IzxToken(web3){
     this.web3 = web3;
 }
 
-IzxToken.prototype.balanceOf = function(address) {
-    var contract = this.contract;
-    var web3 = this.web3;
-    return new Promise(function(resolve, reject){
-        contract.balanceOf(address, function (err, res) {
-            if(err || !res){
-                reject(err);
-            }else{
-                resolve( web3.fromWei(res).toNumber() );
-            }
+IzxToken.prototype = {
+
+    balanceOf: function(address) {
+        var contract = this.contract;
+        var web3 = this.web3;
+        return new Promise(function(resolve, reject){
+            contract.balanceOf(address, function (err, res) {
+                if(err || !res){
+                    reject(err);
+                }else{
+                    resolve( web3.fromWei(res).toNumber() );
+                }
+            });
         });
-    });
+    },
+
+    approve: function(spender, token_amount){
+        var contract = this.contract;
+        var web3 = this.web3;
+        return new Promise(function(resolve, reject){
+            contract.approve(spender, web3.toWei(token_amount),
+                {gas: 60000, from: web3.eth.defaultAccount},
+                function (err, res) {
+                    if(err || !res){
+                        reject(err);
+                    }else{
+                        resolve(res);
+                    }
+                });
+        });
+    }
+
 }
 
 module.exports = IzxToken;

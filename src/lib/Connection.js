@@ -1,18 +1,22 @@
 var Web3 = require('web3');
+var ProviderEngine = require('web3-provider-engine/provider.js');
+var Web3Subprovider = require("web3-provider-engine/subproviders/web3.js");
+var WalletSubprovider = require('web3-provider-engine/subproviders/wallet.js');
+var GaspriceSubprovider = require('web3-provider-engine/subproviders/gasprice.js');
+
 var config = require('./Config');
 
 var IzxToken = require('./contracts/IzxToken');
 var IzxDriveToken = require('./contracts/IzxDriveToken');
 
-var foundation = function() {
-    return new Web3(new Web3.providers.HttpProvider(config.ethereum.foundation.url,
-        config.ethereum.timeout));
-};
-
-var ropsten = function() {
-    return new Web3(new Web3.providers.HttpProvider(config.ethereum.ropsten.url,
-        config.ethereum.timeout
-    ));
+var connect = function(eth_wallet, cb, url, timeout) {
+    const engine = new ProviderEngine();
+    engine.addProvider(new GaspriceSubprovider());
+    engine.addProvider(new WalletSubprovider(eth_wallet, {
+        approveTransaction: cb
+    }));
+    engine.addProvider(new Web3Subprovider(new Web3.providers.HttpProvider(url, timeout )));
+    return new Web3(engine);
 };
 
 function Connection(wallet){
@@ -28,9 +32,9 @@ function Connection(wallet){
                     break;
             }
         }
-    }else{
-        this.ropsten = ropsten();
-        this.foundation = foundation();
+    }else if(wallet.wallet){
+        this.ropsten = connect(wallet.wallet, wallet.approval_callback, config.ethereum.ropsten.url, config.ethereum.timeout);
+        this.foundation = connect(wallet.wallet, wallet.approval_callback, config.ethereum.foundation.url, config.ethereum.timeout);
     }
 
     this.tokens = [];
@@ -40,7 +44,6 @@ function Connection(wallet){
 
     if(this.foundation)
         this.tokens.push(new IzxToken(this.foundation));
-
 
 };
 
