@@ -12,9 +12,7 @@ function IzxToken(web3){
     this.address = address;
 }
 
-IzxToken.prototype = {
-
-    balanceOf: function(address) {
+IzxToken.prototype.balanceOf = function(address) {
         var contract = this.contract;
         var web3 = this.web3;
         return new Promise(function(resolve, reject){
@@ -26,9 +24,9 @@ IzxToken.prototype = {
                 }
             });
         });
-    },
+};
 
-    approve: function(spender, token_amount){
+IzxToken.prototype.approve = function(spender, token_amount){
         var contract = this.contract;
         var web3 = this.web3;
         return new Promise(function(resolve, reject){
@@ -42,9 +40,7 @@ IzxToken.prototype = {
                     }
                 });
         });
-    }
-
-}
+};
 
 module.exports = IzxToken;
 

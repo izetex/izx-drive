@@ -11,8 +11,4 @@ function TokenGame(web3, token){
     this.name = 'Token Game';
 }
 
-TokenGame.prototype = {
-
-};
-
 module.exports = TokenGame;

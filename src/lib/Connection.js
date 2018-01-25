@@ -14,13 +14,15 @@ var IzxDriveToken = require('./contracts/IzxDriveToken');
 var TokenGame = require('./contracts/TokenGame');
 
 var connect = function(eth_wallet, cb, url, timeout) {
-    const engine = new ProviderEngine();
+    var engine = new ProviderEngine();
     engine.addProvider(new GaspriceSubprovider());
     engine.addProvider(new WalletSubprovider(eth_wallet, {
         approveTransaction: cb
     }));
     engine.addProvider(new Web3Subprovider(new Web3.providers.HttpProvider(url, timeout )));
-    return new Web3(engine);
+    var web3 = new Web3(engine);
+    web3.eth.defaultAccount = eth_wallet.getAddressString();
+    return web3;
 };
 
 function Connection(wallet){

@@ -11,9 +11,7 @@ function IzxDriveToken(web3){
     this.address = address;
 }
 
-IzxDriveToken.prototype = {
-
-    balanceOf: function(address) {
+IzxDriveToken.prototype.balanceOf = function(address) {
         var contract = this.contract;
         var web3 = this.web3;
         return new Promise(function(resolve, reject){
@@ -25,9 +23,10 @@ IzxDriveToken.prototype = {
                 }
             });
         });
-    },
+};
 
-    approve: function(spender, token_amount){
+
+IzxDriveToken.prototype.approve = function(spender, token_amount){
         var contract = this.contract;
         var web3 = this.web3;
         return new Promise(function(resolve, reject){
@@ -41,9 +40,7 @@ IzxDriveToken.prototype = {
                 }
             });
         });
-    }
-
-}
+};
 
 
 module.exports = IzxDriveToken;
