@@ -9,6 +9,7 @@ function IzxToken(web3){
     this.symbol = 'IZX';
     this.contract = web3.eth.contract(abi).at(address);
     this.web3 = web3;
+    this.address = address;
 }
 
 IzxToken.prototype = {

@@ -120,6 +120,10 @@ Wallet.prototype.token_balances = function(){
 
 };
 
-
+Wallet.prototype.games = function(){
+    if(!this.connection)
+        return null;
+    return this.connection.games;
+};
 
 module.exports = Wallet;

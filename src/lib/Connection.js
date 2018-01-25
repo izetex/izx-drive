@@ -6,8 +6,12 @@ var GaspriceSubprovider = require('web3-provider-engine/subproviders/gasprice.js
 
 var config = require('./Config');
 
+// Token contracts
 var IzxToken = require('./contracts/IzxToken');
 var IzxDriveToken = require('./contracts/IzxDriveToken');
+
+// Game contracts
+var TokenGame = require('./contracts/TokenGame');
 
 var connect = function(eth_wallet, cb, url, timeout) {
     const engine = new ProviderEngine();
@@ -38,12 +42,20 @@ function Connection(wallet){
     }
 
     this.tokens = [];
+    this.games = [];
 
-    if(this.ropsten)
-        this.tokens.push(new IzxDriveToken(this.ropsten));
+    if(this.ropsten){
+        var token = new IzxDriveToken(this.ropsten);
+        this.tokens.push(token);
+        this.games.push(new TokenGame(this.ropsten, token));
+    }
 
-    if(this.foundation)
-        this.tokens.push(new IzxToken(this.foundation));
+
+    if(this.foundation){
+        var token = new IzxToken(this.foundation);
+        this.tokens.push(token);
+    }
+
 
 };
 

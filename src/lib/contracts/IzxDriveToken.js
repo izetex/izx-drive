@@ -8,6 +8,7 @@ function IzxDriveToken(web3){
     this.symbol = 'DRIVE';
     this.contract = web3.eth.contract(abi).at(address);
     this.web3 = web3;
+    this.address = address;
 }
 
 IzxDriveToken.prototype = {
