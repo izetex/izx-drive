@@ -7,9 +7,11 @@ var Connection = require('./lib/Connection');
 
 
 function Wallet(){
-    this.approval_callback = null;
+
     this.imported = this.exported = false;
     this.mnemonic = this.privateKey = this.address = this.web3 = this.connection = this.wallet = null;
+    this.user_callback = null;
+
 }
 
 
@@ -89,6 +91,13 @@ Wallet.prototype.connect_web3 = function(web3) {
     this.connection = new Connection(this);
 };
 
+
+Wallet.prototype.approval_callback = function(txParams, cb){
+   if(this.user_callback){
+    this.user_callback(txParams, cb);
+   }
+}
+
 /*
 wallet.set_approval_callback( function askApprove(txParams, cb) {
     console.log("askApprove for: %o ",txParams); // gas from to data
@@ -97,7 +106,7 @@ wallet.set_approval_callback( function askApprove(txParams, cb) {
 });
 */
 Wallet.prototype.set_approval_callback = function(cb){
-    this.approval_callback = cb;
+    this.user_callback = cb;
 }
 
 Wallet.prototype.tokens = function(){

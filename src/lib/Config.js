@@ -2,7 +2,7 @@ module.exports = {
 
    ethereum: {
        ropsten: {
-           url: 'https://ropsten.infura.io/aaIrr36iBro3mIVCdWrg' //'https://izx.io/ropsten',
+           url: 'https://ropsten.infura.io'
 
        },
        foundation: {
